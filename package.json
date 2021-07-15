@@ -1,0 +1,21 @@
+{
+  "name": "css-ratio",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "湫曗 <autumnsilverleaves@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "serve": "vite"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^1.2.5",
+    "@vitejs/plugin-vue-jsx": "^1.1.6",
+    "@vue/compiler-sfc": "^3.1.4",
+    "vite": "^2.4.2",
+    "vite-plugin-windicss": "^1.2.4",
+    "windicss": "^3.1.5"
+  },
+  "dependencies": {
+    "vue": "^3.1.4"
+  }
+}
