@@ -1,67 +1,16 @@
 import { onMounted, reactive } from "vue";
 import { defineFunctionComponent } from "./support/defineFunctionComponent";
 
-function calcSizeByRatio(
-  containerElement: { clientWidth: number; clientHeight: number },
-  ratio: number
-) {
-  const size = {
-    width: 0,
-    height: 0,
-  };
-
-  const wSize = {
-    clientWidth: containerElement.clientWidth,
-    clientHeight: containerElement.clientWidth / ratio,
-  };
-  const hSize = {
-    clientWidth: containerElement.clientHeight * ratio,
-    clientHeight: containerElement.clientHeight,
-  };
-  const wElement = wSize;
-  const hElement = hSize;
-
-  if (wElement.clientHeight <= containerElement.clientHeight) {
-    size.width = wElement.clientWidth;
-    size.height = wElement.clientHeight;
-  } else {
-    size.width = hElement.clientWidth;
-    size.height = hElement.clientHeight;
-  }
-  return size;
-}
-
+import { useRatio } from "./useRatio";
 export const Contain = defineFunctionComponent((a, { slots }) => {
-  const ratio = 16 / 9;
-
-  const size = reactive({
-    width: 0,
-    height: 0,
-  });
+  const { ratio, containerNode, containSize } = useRatio();
 
   const container = (
     <div class="bg-gray-400 absolute left-0 right-0 top-0 bottom-0 -z-1"></div>
   );
 
-  const observe = new ResizeObserver((event) => {
-    const { width, height } = calcSizeByRatio(
-      container.el as HTMLDivElement,
-      ratio
-    );
-
-    size.width = width;
-    size.height = height;
-    // console.log(
-    //   "resize",
-    //   JSON.stringify(size, undefined, 4),
-    //   size.width / size.height,
-    //   16 / 9
-    // );
-  });
-
   onMounted(() => {
-    observe.observe(container.el as Element);
-    console.log(container.el);
+    containerNode.value = container.el as HTMLDivElement;
   });
 
   return {
@@ -73,8 +22,8 @@ export const Contain = defineFunctionComponent((a, { slots }) => {
             <div
               class="bg-red-600"
               style={{
-                width: `${size.width}px`,
-                height: `${size.height}px`,
+                width: `${containSize.value.width}px`,
+                height: `${containSize.value.height}px`,
               }}
             >
               {slots?.default?.()}
