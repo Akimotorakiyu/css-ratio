@@ -1,6 +1,36 @@
 import { onMounted, reactive } from "vue";
 import { defineFunctionComponent } from "./support/defineFunctionComponent";
 
+function calcSizeByRatio(
+  containerElement: { clientWidth: number; clientHeight: number },
+  ratio: number
+) {
+  const size = {
+    width: 0,
+    height: 0,
+  };
+
+  const wSize = {
+    clientWidth: containerElement.clientWidth,
+    clientHeight: containerElement.clientWidth / ratio,
+  };
+  const hSize = {
+    clientWidth: containerElement.clientHeight * ratio,
+    clientHeight: containerElement.clientHeight,
+  };
+  const wElement = wSize;
+  const hElement = hSize;
+
+  if (wElement.clientHeight <= containerElement.clientHeight) {
+    size.width = wElement.clientWidth;
+    size.height = wElement.clientHeight;
+  } else {
+    size.width = hElement.clientWidth;
+    size.height = hElement.clientHeight;
+  }
+  return size;
+}
+
 export const Contain = defineFunctionComponent((a, { slots }) => {
   const ratio = 16 / 9;
 
@@ -14,25 +44,13 @@ export const Contain = defineFunctionComponent((a, { slots }) => {
   );
 
   const observe = new ResizeObserver((event) => {
-    const containerElement = container.el as HTMLDivElement;
-    const wSize = {
-      clientWidth: containerElement.clientWidth,
-      clientHeight: containerElement.clientWidth / ratio,
-    };
-    const hSize = {
-      clientWidth: containerElement.clientHeight * ratio,
-      clientHeight: containerElement.clientHeight,
-    };
-    const wElement = wSize;
-    const hElement = hSize;
+    const { width, height } = calcSizeByRatio(
+      container.el as HTMLDivElement,
+      ratio
+    );
 
-    if (wElement.clientHeight <= containerElement.clientHeight) {
-      size.width = wElement.clientWidth;
-      size.height = wElement.clientHeight;
-    } else {
-      size.width = hElement.clientWidth;
-      size.height = hElement.clientHeight;
-    }
+    size.width = width;
+    size.height = height;
     // console.log(
     //   "resize",
     //   JSON.stringify(size, undefined, 4),
